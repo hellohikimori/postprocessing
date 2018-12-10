@@ -26,26 +26,25 @@ import subtractBlendFunction from "./glsl/subtract/shader.frag";
  * @private
  */
 
-const blendFunctions = new Map([
-	[BlendFunction.SKIP, null],
-	[BlendFunction.ADD, addBlendFunction],
-	[BlendFunction.ALPHA, alphaBlendFunction],
-	[BlendFunction.AVERAGE, averageBlendFunction],
-	[BlendFunction.COLOR_BURN, colorBurnBlendFunction],
-	[BlendFunction.COLOR_DODGE, colorDodgeBlendFunction],
-	[BlendFunction.DARKEN, darkenBlendFunction],
-	[BlendFunction.DIFFERENCE, differenceBlendFunction],
-	[BlendFunction.EXCLUSION, exclusionBlendFunction],
-	[BlendFunction.LIGHTEN, lightenBlendFunction],
-	[BlendFunction.MULTIPLY, multiplyBlendFunction],
-	[BlendFunction.NEGATION, negationBlendFunction],
-	[BlendFunction.NORMAL, normalBlendFunction],
-	[BlendFunction.OVERLAY, overlayBlendFunction],
-	[BlendFunction.REFLECT, reflectBlendFunction],
-	[BlendFunction.SCREEN, screenBlendFunction],
-	[BlendFunction.SOFT_LIGHT, softLightBlendFunction],
-	[BlendFunction.SUBTRACT, subtractBlendFunction]
-]);
+const blendFunctions = new Map();
+blendFunctions.set(BlendFunction.SKIP, null);
+blendFunctions.set(BlendFunction.ADD, addBlendFunction);
+blendFunctions.set(BlendFunction.ALPHA, alphaBlendFunction);
+blendFunctions.set(BlendFunction.AVERAGE, averageBlendFunction);
+blendFunctions.set(BlendFunction.COLOR_BURN, colorBurnBlendFunction);
+blendFunctions.set(BlendFunction.COLOR_DODGE, colorDodgeBlendFunction);
+blendFunctions.set(BlendFunction.DARKEN, darkenBlendFunction);
+blendFunctions.set(BlendFunction.DIFFERENCE, differenceBlendFunction);
+blendFunctions.set(BlendFunction.EXCLUSION, exclusionBlendFunction);
+blendFunctions.set(BlendFunction.LIGHTEN, lightenBlendFunction);
+blendFunctions.set(BlendFunction.MULTIPLY, multiplyBlendFunction);
+blendFunctions.set(BlendFunction.NEGATION, negationBlendFunction);
+blendFunctions.set(BlendFunction.NORMAL, normalBlendFunction);
+blendFunctions.set(BlendFunction.OVERLAY, overlayBlendFunction);
+blendFunctions.set(BlendFunction.REFLECT, reflectBlendFunction);
+blendFunctions.set(BlendFunction.SCREEN, screenBlendFunction);
+blendFunctions.set(BlendFunction.SOFT_LIGHT, softLightBlendFunction);
+blendFunctions.set(BlendFunction.SUBTRACT, subtractBlendFunction);
 
 /**
  * A blend mode.
