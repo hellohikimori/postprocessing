@@ -1,23 +1,23 @@
 import { Uniform } from "three";
 import { BlendFunction } from "./BlendFunction.js";
 
-import addBlendFunction from "./glsl/add/shader.frag";
-import alphaBlendFunction from "./glsl/alpha/shader.frag";
-import averageBlendFunction from "./glsl/average/shader.frag";
-import colorBurnBlendFunction from "./glsl/color-burn/shader.frag";
-import colorDodgeBlendFunction from "./glsl/color-dodge/shader.frag";
-import darkenBlendFunction from "./glsl/darken/shader.frag";
-import differenceBlendFunction from "./glsl/difference/shader.frag";
-import exclusionBlendFunction from "./glsl/exclusion/shader.frag";
-import lightenBlendFunction from "./glsl/lighten/shader.frag";
-import multiplyBlendFunction from "./glsl/multiply/shader.frag";
-import negationBlendFunction from "./glsl/negation/shader.frag";
-import normalBlendFunction from "./glsl/normal/shader.frag";
-import overlayBlendFunction from "./glsl/overlay/shader.frag";
-import reflectBlendFunction from "./glsl/reflect/shader.frag";
-import screenBlendFunction from "./glsl/screen/shader.frag";
-import softLightBlendFunction from "./glsl/soft-light/shader.frag";
-import subtractBlendFunction from "./glsl/subtract/shader.frag";
+const addBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn min(x + y, 1.0) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const alphaBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn y * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, y.a), x.a);\n\n}\n";
+const averageBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn (x + y) * 0.5 * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const colorBurnBlendFunction = "float blend(const in float x, const in float y) {\n\n\treturn (y == 0.0) ? y : max(1.0 - (1.0 - x) / y, 0.0);\n\n}\n\nvec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\tvec3 z = vec3(blend(x.r, y.r), blend(x.g, y.g), blend(x.b, y.b));\n\n\treturn z * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const colorDodgeBlendFunction = "float blend(const in float x, const in float y) {\n\n\treturn (y == 1.0) ? y : min(x / (1.0 - y), 1.0);\n\n}\n\nvec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\tvec3 z = vec3(blend(x.r, y.r), blend(x.g, y.g), blend(x.b, y.b));\n\n\treturn z * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const darkenBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn min(x, y) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const differenceBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn abs(x - y) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const exclusionBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn (x + y - 2.0 * x * y) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const lightenBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn max(x, y) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const multiplyBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn x * y * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const negationBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn (1.0 - abs(1.0 - x - y)) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const normalBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn y * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const overlayBlendFunction = "float blend(const in float x, const in float y) {\n\n\treturn (x < 0.5) ? (2.0 * x * y) : (1.0 - 2.0 * (1.0 - x) * (1.0 - y));\n\n}\n\nvec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\tvec3 z = vec3(blend(x.r, y.r), blend(x.g, y.g), blend(x.b, y.b));\n\n\treturn z * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const reflectBlendFunction = "float blend(const in float x, const in float y) {\n\n\treturn (y == 1.0) ? y : min(x * x / (1.0 - y), 1.0);\n\n}\n\nvec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\tvec3 z = vec3(blend(x.r, y.r), blend(x.g, y.g), blend(x.b, y.b));\n\n\treturn z * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const screenBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn (1.0 - (1.0 - x) * (1.0 - y)) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const softLightBlendFunction = "float blend(const in float x, const in float y) {\n\n\treturn (y < 0.5) ?\n\t\t(2.0 * x * y + x * x * (1.0 - 2.0 * y)) :\n\t\t(sqrt(x) * (2.0 * y - 1.0) + 2.0 * x * (1.0 - y));\n\n}\n\nvec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\tvec3 z = vec3(blend(x.r, y.r), blend(x.g, y.g), blend(x.b, y.b));\n\n\treturn z * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
+const subtractBlendFunction = "vec3 blend(const in vec3 x, const in vec3 y, const in float opacity) {\n\n\treturn max(x + y - 1.0, 0.0) * opacity + x * (1.0 - opacity);\n\n}\n\nvec4 blend(const in vec4 x, const in vec4 y, const in float opacity) {\n\n\treturn vec4(blend(x.rgb, y.rgb, opacity), y.a);\n\n}\n";
 
 /**
  * A blend function shader code catalogue.

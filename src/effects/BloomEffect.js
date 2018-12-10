@@ -11,7 +11,7 @@ import { BlurPass, ShaderPass } from "../passes";
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/texture/shader.frag";
+const fragment = "uniform sampler2D texture;\n\n#ifdef ASPECT_CORRECTION\n\n\tvarying vec2 vUv2;\n\n#endif\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\t#ifdef ASPECT_CORRECTION\n\n\t\toutputColor = texture2D(texture, vUv2);\n\n\t#else\n\n\t\toutputColor = texture2D(texture, uv);\n\n\t#endif\n\n}\n";
 
 /**
  * A bloom effect.

@@ -2,8 +2,8 @@ import { Uniform, Vector2 } from "three";
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect, EffectAttribute } from "./Effect.js";
 
-import fragment from "./glsl/chromatic-aberration/shader.frag";
-import vertex from "./glsl/chromatic-aberration/shader.vert";
+const fragment = "varying vec2 vUvR;\nvarying vec2 vUvB;\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\tvec4 color = inputColor;\n\n\tcolor.r = texture2D(inputBuffer, vUvR).r;\n\tcolor.b = texture2D(inputBuffer, vUvB).b;\n\n\toutputColor = color;\n\n}\n";
+const vertex = "uniform vec2 offset;\n\nvarying vec2 vUvR;\nvarying vec2 vUvB;\n\nvoid mainSupport() {\n\n\tvUvR = uv + offset;\n\tvUvB = uv - offset;\n\n}\n";
 
 /**
  * A chromatic aberration effect.

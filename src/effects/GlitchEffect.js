@@ -11,7 +11,7 @@ import {
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/glitch/shader.frag";
+const fragment = "uniform sampler2D perturbationMap;\n\nuniform bool active;\nuniform float columns;\nuniform float random;\nuniform vec2 seed;\nuniform vec2 distortion;\n\nvoid mainUv(inout vec2 uv) {\n\n\tif(active) {\n\n\t\tvec4 normal = texture2D(perturbationMap, uv * random * random);\n\n\t\tif(uv.y < distortion.x + columns && uv.y > distortion.x - columns * random) {\n\n\t\t\tfloat sx = clamp(ceil(seed.x), 0.0, 1.0);\n\t\t\tuv.y = sx * (1.0 - (uv.y + distortion.y)) + (1.0 - sx) * distortion.y;\n\n\t\t}\n\n\t\tif(uv.x < distortion.y + columns && uv.x > distortion.y - columns * random) {\n\n\t\t\tfloat sy = clamp(ceil(seed.y), 0.0, 1.0);\n\t\t\tuv.x = sy * distortion.x + (1.0 - sy) * (1.0 - (uv.x + distortion.x));\n\n\t\t}\n\n\t\tuv.x += normal.x * seed.x * (random * 0.2);\n\t\tuv.y += normal.y * seed.y * (random * 0.2);\n\n\t}\n\n}\n";
 
 /**
  * A label for generated data textures.

@@ -1,7 +1,7 @@
 import { ShaderMaterial, Uniform, Vector2 } from "three";
 
-import fragment from "./glsl/luminance/shader.frag";
-import vertex from "./glsl/luminance/shader.vert";
+const fragment = "#include <common>\n\nuniform sampler2D inputBuffer;\nuniform float distinction;\nuniform vec2 range;\n\nvarying vec2 vUv;\n\nvoid main() {\n\n\tvec4 texel = texture2D(inputBuffer, vUv);\n\tfloat l = linearToRelativeLuminance(texel.rgb);\n\n\t#ifdef RANGE\n\n\t\tfloat low = step(range.x, l);\n\t\tfloat high = step(l, range.y);\n\n\t\t// Apply the mask.\n\t\tl *= low * high;\n\n\t#endif\n\n\tl = pow(abs(l), distinction);\n\n\t#ifdef COLOR\n\n\t\tgl_FragColor = vec4(texel.rgb * l, texel.a);\n\n\t#else\n\n\t\tgl_FragColor = vec4(l, l, l, texel.a);\n\n\t#endif\n\n}\n";
+const vertex = "varying vec2 vUv;\n\nvoid main() {\n\n\tvUv = uv;\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n\n}\n";
 
 /**
  * A luminance shader material.

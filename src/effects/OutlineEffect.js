@@ -18,8 +18,8 @@ import { BlurPass, ClearPass, DepthPass, RenderPass, ShaderPass } from "../passe
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/outline/shader.frag";
-import vertex from "./glsl/outline/shader.vert";
+const fragment = "uniform sampler2D edgeTexture;\nuniform sampler2D maskTexture;\n\nuniform vec3 visibleEdgeColor;\nuniform vec3 hiddenEdgeColor;\nuniform float pulse;\nuniform float edgeStrength;\n\n#ifdef USE_PATTERN\n\n\tuniform sampler2D patternTexture;\n\tvarying vec2 vUvPattern;\n\n#endif\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\tvec2 edge = texture2D(edgeTexture, uv).rg;\n\tvec2 mask = texture2D(maskTexture, uv).rg;\n\n\t#ifndef X_RAY\n\n\t\tedge.y = 0.0;\n\n\t#endif\n\n\tedge *= (edgeStrength * mask.x * pulse);\n\tvec3 color = edge.x * visibleEdgeColor + edge.y * hiddenEdgeColor;\n\n\tfloat visibilityFactor = 0.0;\n\n\t#ifdef USE_PATTERN\n\n\t\tvec4 patternColor = texture2D(patternTexture, vUvPattern);\n\n\t\t#ifdef X_RAY\n\n\t\t\tfloat hiddenFactor = 0.5;\n\n\t\t#else\n\n\t\t\tfloat hiddenFactor = 0.0;\n\n\t\t#endif\n\n\t\tvisibilityFactor = (1.0 - mask.y > 0.0) ? 1.0 : hiddenFactor;\n\t\tvisibilityFactor *= (1.0 - mask.x) * patternColor.a;\n\t\tcolor += visibilityFactor * patternColor.rgb;\n\n\t#endif\n\n\toutputColor = vec4(color, max(max(edge.x, edge.y), visibilityFactor));\n\n}\n";
+const vertex = "uniform float patternScale;\n\nvarying vec2 vUvPattern;\n\nvoid mainSupport() {\n\n\tvUvPattern = uv * vec2(aspect, 1.0) * patternScale;\n\n}\n";
 
 /**
  * An outline effect.

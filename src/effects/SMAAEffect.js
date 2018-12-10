@@ -17,8 +17,8 @@ import { Effect, EffectAttribute } from "./Effect.js";
 import searchImageDataURL from "../images/smaa/searchImageDataURL.js";
 import areaImageDataURL from "../images/smaa/areaImageDataURL.js";
 
-import fragment from "./glsl/smaa/shader.frag";
-import vertex from "./glsl/smaa/shader.vert";
+const fragment = "uniform sampler2D weightMap;\n\nvarying vec2 vOffset0;\nvarying vec2 vOffset1;\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\t// Fetch the blending weights for the current pixel.\n\tvec4 a;\n\ta.rb = texture2D(weightMap, uv).rb;\n\ta.g = texture2D(weightMap, vOffset1).g;\n\ta.a = texture2D(weightMap, vOffset0).a;\n\n\tvec4 color = inputColor;\n\n\t// Ignore tiny blending weights.\n\tif(dot(a, vec4(1.0)) >= 1e-5) {\n\n\t\t/* Up to four lines can be crossing a pixel (one through each edge).\n\t\t * The line with the maximum weight for each direction is favoured.\n\t\t */\n\n\t\tvec2 offset = vec2(\n\t\t\ta.a > a.b ? a.a : -a.b,\t// Left vs. right.\n\t\t\ta.g > a.r ? -a.g : a.r\t// Top vs. bottom (changed signs).\n\t\t);\n\n\t\t// Go in the direction with the maximum weight (horizontal vs. vertical).\n\t\tif(abs(offset.x) > abs(offset.y)) {\n\n\t\t\toffset.y = 0.0;\n\n\t\t} else {\n\n\t\t\toffset.x = 0.0;\n\n\t\t}\n\n\t\t// Fetch the opposite color and lerp by hand.\n\t\tvec4 oppositeColor = texture2D(inputBuffer, uv + sign(offset) * texelSize);\n\t\tfloat s = abs(offset.x) > abs(offset.y) ? abs(offset.x) : abs(offset.y);\n\n\t\t// Gamma correction.\n\t\tcolor.rgb = pow(abs(color.rgb), vec3(2.2));\n\t\toppositeColor.rgb = pow(abs(oppositeColor.rgb), vec3(2.2));\n\t\tcolor = mix(color, oppositeColor, s);\n\t\tcolor.rgb = pow(abs(color.rgb), vec3(1.0 / 2.2));\n\n\t}\n\n\toutputColor = color;\n\n}\n";
+const vertex = "varying vec2 vOffset0;\nvarying vec2 vOffset1;\n\nvoid mainSupport() {\n\n\tvOffset0 = uv + texelSize * vec2(1.0, 0.0);\n\tvOffset1 = uv + texelSize * vec2(0.0, -1.0); // Changed sign in Y component.\n\n}\n";
 
 /**
  * Subpixel Morphological Antialiasing (SMAA) v2.8.

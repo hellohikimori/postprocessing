@@ -1,7 +1,7 @@
 import { PerspectiveCamera, ShaderMaterial, Uniform } from "three";
 
-import fragment from "./glsl/depth-comparison/shader.frag";
-import vertex from "./glsl/depth-comparison/shader.vert";
+const fragment = "#include <packing>\n#include <clipping_planes_pars_fragment>\n\nuniform sampler2D depthBuffer;\nuniform float cameraNear;\nuniform float cameraFar;\n\nvarying float vViewZ;\nvarying vec4 vProjTexCoord;\n\nvoid main() {\n\n\t#include <clipping_planes_fragment>\n\n\t// Transform into Cartesian coordinate (not mirrored).\n\tvec2 projTexCoord = (vProjTexCoord.xy / vProjTexCoord.w) * 0.5 + 0.5;\n\tprojTexCoord = clamp(projTexCoord, 0.002, 0.998);\n\n\tfloat fragCoordZ = unpackRGBAToDepth(texture2D(depthBuffer, projTexCoord));\n\n\t#ifdef PERSPECTIVE_CAMERA\n\n\t\tfloat viewZ = perspectiveDepthToViewZ(fragCoordZ, cameraNear, cameraFar);\n\n\t#else\n\n\t\tfloat viewZ = orthographicDepthToViewZ(fragCoordZ, cameraNear, cameraFar);\n\n\t#endif\n\n\tfloat depthTest = (-vViewZ > -viewZ) ? 1.0 : 0.0;\n\n\tgl_FragColor.rgb = vec3(0.0, depthTest, 1.0);\n\n}\n";
+const vertex = "#include <common>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <clipping_planes_pars_vertex>\n\nvarying float vViewZ;\nvarying vec4 vProjTexCoord;\n\nvoid main() {\n\n\t#include <skinbase_vertex>\n\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <project_vertex>\n\n\tvViewZ = mvPosition.z;\n\tvProjTexCoord = gl_Position;\n\n\t#include <clipping_planes_vertex>\n\n}\n";
 
 /**
  * A depth comparison shader material.

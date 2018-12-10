@@ -2,7 +2,7 @@ import { Uniform } from "three";
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/gamma-correction/shader.frag";
+const fragment = "uniform float gamma;\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\toutputColor = LinearToGamma(max(inputColor, 0.0), gamma);\n\n}\n";
 
 /**
  * A gamma correction effect.

@@ -1,7 +1,7 @@
 import { PerspectiveCamera, ShaderMaterial, Uniform, Vector2 } from "three";
 
-import fragmentTemplate from "./glsl/effect/shader.frag";
-import vertexTemplate from "./glsl/effect/shader.vert";
+const fragmentTemplate = "#include <common>\n#include <packing>\n#include <dithering_pars_fragment>\n\nuniform sampler2D inputBuffer;\nuniform sampler2D depthBuffer;\n\nuniform vec2 resolution;\nuniform vec2 texelSize;\n\nuniform float cameraNear;\nuniform float cameraFar;\nuniform float aspect;\nuniform float time;\n\nvarying vec2 vUv;\n\nfloat readDepth(const in vec2 uv) {\n\n\t#if DEPTH_PACKING == 3201\n\n\t\treturn unpackRGBAToDepth(texture2D(depthBuffer, uv));\n\n\t#else\n\n\t\treturn texture2D(depthBuffer, uv).r;\n\n\t#endif\n\n}\n\nFRAGMENT_HEAD\n\nvoid main() {\n\n\tFRAGMENT_MAIN_UV\n\n\tvec4 color0 = texture2D(inputBuffer, UV);\n\tvec4 color1 = vec4(0.0);\n\n\tFRAGMENT_MAIN_IMAGE\n\n\tgl_FragColor = color0;\n\n\t#include <dithering_fragment>\n\n}\n";
+const vertexTemplate = "uniform vec2 resolution;\nuniform vec2 texelSize;\n\nuniform float cameraNear;\nuniform float cameraFar;\nuniform float aspect;\nuniform float time;\n\nvarying vec2 vUv;\n\nVERTEX_HEAD\n\nvoid main() {\n\n\tvUv = uv;\n\n\tVERTEX_MAIN_SUPPORT\n\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n\n}\n";
 
 /**
  * An effect material for compound shaders.

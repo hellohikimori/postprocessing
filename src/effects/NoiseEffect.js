@@ -1,7 +1,7 @@
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/noise/shader.frag";
+const fragment = "void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\tvec3 noise = vec3(rand(uv * time));\n\n\t#ifdef PREMULTIPLY\n\n\t\toutputColor = vec4(inputColor.rgb * noise, inputColor.a);\n\n\t#else\n\n\t\toutputColor = vec4(noise, inputColor.a);\n\n\t#endif\n\n}\n";
 
 /**
  * A noise effect.

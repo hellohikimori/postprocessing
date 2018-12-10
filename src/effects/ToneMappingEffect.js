@@ -12,7 +12,7 @@ import { ClearPass, SavePass, ShaderPass } from "../passes";
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/tone-mapping/shader.frag";
+const fragment = "uniform sampler2D luminanceMap;\nuniform float middleGrey;\nuniform float maxLuminance;\nuniform float averageLuminance;\n\nvec3 toneMap(vec3 c) {\n\n\t#ifdef ADAPTED_LUMINANCE\n\n\t\t// Get the calculated average luminance by sampling the center.\n\t\tfloat lumAvg = texture2D(luminanceMap, vec2(0.5)).r;\n\n\t#else\n\n\t\tfloat lumAvg = averageLuminance;\n\n\t#endif\n\n\t// Calculate the luminance of the current pixel.\n\tfloat lumPixel = linearToRelativeLuminance(c);\n\n\t// Apply the modified operator (Reinhard Eq. 4).\n\tfloat lumScaled = (lumPixel * middleGrey) / lumAvg;\n\n\tfloat lumCompressed = (lumScaled * (1.0 + (lumScaled / (maxLuminance * maxLuminance)))) / (1.0 + lumScaled);\n\n\treturn lumCompressed * c;\n\n}\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\toutputColor = vec4(toneMap(inputColor.rgb), inputColor.a);\n\n}\n";
 
 /**
  * A tone mapping effect that supports adaptive luminosity.

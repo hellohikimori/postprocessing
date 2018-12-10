@@ -2,8 +2,8 @@ import { Uniform } from "three";
 import { BlendFunction } from "./blending/BlendFunction.js";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/texture/shader.frag";
-import vertex from "./glsl/texture/shader.vert";
+const fragment = "uniform sampler2D texture;\n\n#ifdef ASPECT_CORRECTION\n\n\tvarying vec2 vUv2;\n\n#endif\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n\n\t#ifdef ASPECT_CORRECTION\n\n\t\toutputColor = texture2D(texture, vUv2);\n\n\t#else\n\n\t\toutputColor = texture2D(texture, uv);\n\n\t#endif\n\n}\n";
+const vertex = "uniform float scale;\n\nvarying vec2 vUv2;\n\nvoid mainSupport() {\n\n\tvUv2 = uv * vec2(aspect, 1.0) * scale;\n\n}\n";
 
 /**
  * A texture effect.

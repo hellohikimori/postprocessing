@@ -1,7 +1,7 @@
 import { ShaderMaterial, Uniform, Vector2 } from "three";
 
-import fragment from "./glsl/convolution/shader.frag";
-import vertex from "./glsl/convolution/shader.vert";
+const fragment = "#include <common>\n#include <dithering_pars_fragment>\n\nuniform sampler2D inputBuffer;\n\nvarying vec2 vUv0;\nvarying vec2 vUv1;\nvarying vec2 vUv2;\nvarying vec2 vUv3;\n\nvoid main() {\n\n\t// Sample top left texel.\n\tvec4 sum = texture2D(inputBuffer, vUv0);\n\n\t// Sample top right texel.\n\tsum += texture2D(inputBuffer, vUv1);\n\n\t// Sample bottom right texel.\n\tsum += texture2D(inputBuffer, vUv2);\n\n\t// Sample bottom left texel.\n\tsum += texture2D(inputBuffer, vUv3);\n\n\t// Compute the average.\n\tgl_FragColor = sum * 0.25;\n\n\t#include <dithering_fragment>\n\n}\n";
+const vertex = "uniform vec2 texelSize;\nuniform vec2 halfTexelSize;\nuniform float kernel;\n\n/* Packing multiple texture coordinates into one varying and using a swizzle to\nextract them in the fragment shader still causes a dependent texture read. */\nvarying vec2 vUv0;\nvarying vec2 vUv1;\nvarying vec2 vUv2;\nvarying vec2 vUv3;\n\nvoid main() {\n\n\tvec2 dUv = (texelSize * vec2(kernel)) + halfTexelSize;\n\n\tvUv0 = vec2(uv.x - dUv.x, uv.y + dUv.y);\n\tvUv1 = vec2(uv.x + dUv.x, uv.y + dUv.y);\n\tvUv2 = vec2(uv.x + dUv.x, uv.y - dUv.y);\n\tvUv3 = vec2(uv.x - dUv.x, uv.y - dUv.y);\n\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n\n}\n";
 
 /**
  * An optimised convolution shader material.

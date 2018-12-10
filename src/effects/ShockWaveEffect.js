@@ -1,8 +1,8 @@
 import { Uniform, Vector2, Vector3 } from "three";
 import { Effect } from "./Effect.js";
 
-import fragment from "./glsl/shock-wave/shader.frag";
-import vertex from "./glsl/shock-wave/shader.vert";
+const fragment = "uniform bool active;\nuniform vec2 center;\nuniform float waveSize;\nuniform float radius;\nuniform float maxRadius;\nuniform float amplitude;\n\nvarying float vSize;\n\nvoid mainUv(inout vec2 uv) {\n\n\tif(active) {\n\n\t\tvec2 aspectCorrection = vec2(aspect, 1.0);\n\t\tvec2 difference = uv * aspectCorrection - center * aspectCorrection;\n\t\tfloat distance = sqrt(dot(difference, difference)) * vSize;\n\n\t\tif(distance > radius) {\n\n\t\t\tif(distance < radius + waveSize) {\n\n\t\t\t\tfloat angle = (distance - radius) * PI2 / waveSize;\n\t\t\t\tfloat cosSin = (1.0 - cos(angle)) * 0.5;\n\n\t\t\t\tfloat extent = maxRadius + waveSize;\n\t\t\t\tfloat decay = max(extent - distance * distance, 0.0) / extent;\n\n\t\t\t\tuv -= ((cosSin * amplitude * difference) / distance) * decay;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n}\n";
+const vertex = "uniform float size;\nuniform float cameraDistance;\n\nvarying float vSize;\n\nvoid mainSupport() {\n\n\tvSize = (0.1 * cameraDistance) / size;\n\n}\n";
 
 /**
  * Half PI.
